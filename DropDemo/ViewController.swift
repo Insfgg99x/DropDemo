@@ -15,6 +15,8 @@ class ViewController: UIViewController {
     private var sence : DropScene?
     private var tbView = UITableView.init(frame: UIScreen.main.bounds, style: .plain)
     private let disposeBag = DisposeBag()
+    private var playItem = UIBarButtonItem.init()
+    private var flag = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +25,10 @@ class ViewController: UIViewController {
         addDropView()
     }
     private func setup() {
+        title = "樱花🌸掉落"
         view.backgroundColor = .white
+        playItem = UIBarButtonItem.init(barButtonSystemItem: .pause, target: self, action: #selector(rightIteClickAction(_:)))
+        navigationItem.rightBarButtonItem = playItem
     }
     private func createTableView() {
         tbView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: "cid")
@@ -46,11 +51,20 @@ class ViewController: UIViewController {
         let trasition = SKTransition.reveal(with: .up, duration: 0.2)
         dropView.presentScene(sence!, transition: trasition)
         dropView.backgroundColor = .clear
+        
         sence?.drop()
     }
 }
 extension ViewController {
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        sence?.drop()
+    @objc private func rightIteClickAction(_ sender : UIBarButtonItem) {
+        if(flag) {
+            sence?.drop()
+            playItem = UIBarButtonItem.init(barButtonSystemItem: .pause, target: self, action: #selector(rightIteClickAction(_:)))
+        } else {
+            sence?.stop()
+            playItem = UIBarButtonItem.init(barButtonSystemItem: .play, target: self, action: #selector(rightIteClickAction(_:)))
+        }
+        navigationItem.rightBarButtonItem = playItem
+        flag = !flag
     }
 }
